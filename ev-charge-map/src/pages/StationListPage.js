@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchStations } from "../api/Openapi";
 import { createMyStation } from "../api/mockapi";
@@ -8,45 +7,47 @@ function StationListPage() {
   const [keyword, setKeyword] = useState("");
   const [chargerType, setChargerType] = useState("");
   const [stations, setStations] = useState([]);
-  const [page, setPage] = useState(1); // 
+  const [page, setPage] = useState(1); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const loadStations = async (overridePage) => {
-    const currentPage = overridePage ?? page; 
+  // 🔥 useCallback으로 감싸서 useEffect에서 dependency 오류 안 나도록 함
+  const loadStations = useCallback(
+    async (overridePage) => {
+      const currentPage = overridePage ?? page;
 
-    setLoading(true);
-    setError(null);
-    setMessage("");
+      setLoading(true);
+      setError(null);
+      setMessage("");
 
-    try {
-      const list = await fetchStations({
-        keyword,
-        chargerType,
-        page: currentPage, // 
-        
-      });
+      try {
+        const list = await fetchStations({
+          keyword,
+          chargerType,
+          page: currentPage,
+        });
 
-      setStations(list);
+        setStations(list);
 
-      if (list.length === 0) {
-        setMessage("조건에 맞는 충전소가 없습니다. 검색어/필터를 바꿔보세요.");
+        if (list.length === 0) {
+          setMessage("조건에 맞는 충전소가 없습니다. 검색어/필터를 바꿔보세요.");
+        }
+      } catch (err) {
+        console.error(err);
+        setError("충전소 데이터를 불러오지 못했습니다.");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      setError("충전소 데이터를 불러오지 못했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [keyword, chargerType, page] // loadStations 내부에서 사용하는 state들
+  );
 
- 
+  // 🔥 이제 ESLint 오류 없음
   useEffect(() => {
     loadStations();
-  
-  }, [page]);
+  }, [loadStations]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -55,17 +56,14 @@ function StationListPage() {
   };
 
   const handleAddToMyStations = async (station) => {
-  try {
-    await createMyStation(station);
-
-
-    setMessage("My Stations에 추가되었습니다.");
-  } catch (err) {
-    console.error(err);
-    setError("My Stations에 추가하는 도중 오류가 발생했습니다.");
-  }
-};
-
+    try {
+      await createMyStation(station);
+      setMessage("My Stations에 추가되었습니다.");
+    } catch (err) {
+      console.error(err);
+      setError("My Stations에 추가하는 도중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <section>
@@ -149,7 +147,7 @@ function StationListPage() {
         ))}
       </div>
 
-      {/* 🔹 페이지네이션 UI */}
+      {/* 페이지네이션 */}
       {stations.length > 0 && (
         <div className="pagination">
           <button
