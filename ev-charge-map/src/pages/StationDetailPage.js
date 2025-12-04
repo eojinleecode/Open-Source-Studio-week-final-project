@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -6,14 +5,10 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-
 const markerIcon = new L.Icon({
-  iconUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
@@ -23,10 +18,8 @@ function StationDetailPage() {
   const navigate = useNavigate();
   const station = state?.station;
 
-  // 🔹 아래 로드뷰를 그릴 div
   const roadviewRef = useRef(null);
 
-  // 🔹 네이버 로드뷰 초기화
   useEffect(() => {
     if (!station || !station.lat || !station.lng) return;
 
@@ -38,8 +31,7 @@ function StationDetailPage() {
 
     const position = new naver.maps.LatLng(station.lat, station.lng);
 
-   
-    const pano = new naver.maps.Panorama(roadviewRef.current, {
+    new naver.maps.Panorama(roadviewRef.current, {
       position,
       pov: { pan: -135, tilt: 29, fov: 100 },
     });
@@ -49,9 +41,7 @@ function StationDetailPage() {
     return (
       <section>
         <p>충전소 정보를 찾을 수 없습니다.</p>
-        <button onClick={() => navigate("/stations")}>
-          목록으로 돌아가기
-        </button>
+        <button onClick={() => navigate("/stations")}>목록으로 돌아가기</button>
       </section>
     );
   }
@@ -60,10 +50,7 @@ function StationDetailPage() {
 
   return (
     <section className="detail-page">
-      <button
-        onClick={() => navigate(-1)}
-        className="back-button"
-      >
+      <button onClick={() => navigate(-1)} className="back-button">
         ← 목록으로
       </button>
 
@@ -102,7 +89,7 @@ function StationDetailPage() {
 
       {hasLocation && (
         <>
-          {/* 🔵 1. 위 지도 (Leaflet) */}
+          {/* 🔵 상단 지도 */}
           <div className="detail-map-block">
             <h3>지도에서 위치 보기</h3>
             <MapContainer
@@ -118,7 +105,7 @@ function StationDetailPage() {
               scrollWheelZoom={false}
             >
               <TileLayer
-                attribution='&copy; OpenStreetMap'
+                attribution="&copy; OpenStreetMap"
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               <Marker position={[station.lat, station.lng]} icon={markerIcon}>
@@ -131,7 +118,7 @@ function StationDetailPage() {
             </MapContainer>
           </div>
 
-          {/* 🟢 2. 아래 네이버 로드뷰 */}
+          {/* 🟢 하단 로드뷰 */}
           <div className="detail-roadview-block">
             <h3>네이버 로드뷰</h3>
             <div
