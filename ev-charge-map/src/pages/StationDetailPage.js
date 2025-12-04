@@ -18,10 +18,8 @@ function StationDetailPage() {
   const navigate = useNavigate();
   const station = state?.station;
 
-  // 네이버 로드뷰 DOM ref
   const roadviewRef = useRef(null);
 
-  // 네이버 로드뷰 초기화
   useEffect(() => {
     if (!station || !station.lat || !station.lng) return;
 
@@ -33,7 +31,6 @@ function StationDetailPage() {
 
     const position = new naver.maps.LatLng(station.lat, station.lng);
 
-    // 🔥 unused variable 생성 금지 → 바로 생성만 함
     new naver.maps.Panorama(roadviewRef.current, {
       position,
       pov: { pan: -135, tilt: 29, fov: 100 },
