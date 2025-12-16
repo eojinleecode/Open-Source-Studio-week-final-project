@@ -5,6 +5,7 @@ import StationListPage from "./pages/StationListPage";
 import StationDetailPage from "./pages/StationDetailPage";
 import MyStationsPage from "./pages/MyStationsPage";
 import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/stations/:id" element={<StationDetailPage />} />
           <Route path="/mystations" element={<MyStationsPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
         </Routes>
       </main>
     </div>
