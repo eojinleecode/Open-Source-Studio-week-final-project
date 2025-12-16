@@ -189,11 +189,25 @@ function StationListPage() {
                       onClick={() => handleAddToMyStations(s)}
                       disabled={isFav} 
                       style={{ 
-                        backgroundColor: isFav ? "#ff4757" : "#2563eb",
-                        cursor: isFav ? "not-allowed" : "pointer"
+                      backgroundColor: isFav ? "#ff4757" : "#f1f5f9", 
+                      color: isFav ? "#ffffff" : "#475569",          
+                      border: isFav ? "none" : "1px solid #cbd5e1",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px"
                       }}
                     >
-                      {isFav ? "❤️ 등록됨" : "⭐ 등록"}
+                      {isFav ? (
+                        <>
+                          <span style={{ color: "#ffffff" }}>🤍</span> 
+                          <span style={{ fontWeight: "bold" }}>등록됨</span>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ color: "#ff4757" }}>❤️</span> 
+                          <span>관심등록</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
