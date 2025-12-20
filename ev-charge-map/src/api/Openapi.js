@@ -34,8 +34,8 @@ function normalizeStation(raw, index) {
 }
 
 export async function fetchStations({
-  keyword = "",
-  chargerType = "",
+  city = "",         // 시도 필터 추가
+  chargerType = "",  // 타입 필터 추가
   page = 1,
   perPage = 50,
 } = {}) {
@@ -46,23 +46,19 @@ export async function fetchStations({
       serviceKey: SERVICE_KEY,
     };
 
-    if (keyword) {
-      params["cond[주소::LIKE]"] = keyword;
+    // 서버 측 필터링: API의 cond 기능을 사용
+    if (city) {
+      params["cond[시도::EQ]"] = city;
+    }
+
+    if (chargerType) {
+      params["cond[충전기타입::LIKE]"] = chargerType;
     }
 
     const res = await axios.get(OPEN_API_BASE_URL, { params });
 
     const rawList = res.data.data || [];
-    let list = rawList.map((row, idx) => normalizeStation(row, idx));
-
-    if (chargerType) {
-      const lower = chargerType.toLowerCase();
-      list = list.filter((s) =>
-        (s.chargerType || "").toLowerCase().includes(lower)
-      );
-    }
-
-    return list;
+    return rawList.map((row, idx) => normalizeStation(row, idx));
   } catch (err) {
     console.error("Error fetching stations:", err);
     throw err;

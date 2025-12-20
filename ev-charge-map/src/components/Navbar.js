@@ -1,42 +1,48 @@
-import { NavLink } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleMyStationsClick = (e) => {
+    if (!user) {
+      e.preventDefault(); // 기본 이동 막기
+      if (window.confirm("로그인이 필요한 메뉴입니다. 로그인 페이지로 이동할까요?")) {
+        navigate("/login");
+      }
+    }
+  };
 
   return (
-    <header className="navbar">
-      <div className="nav-left">
-        <span className="nav-brand">EV Charge Map</span>
-      </div>
-
-      <nav className="nav-menu">
-        <NavLink to="/" className="nav-link">
-          Home
-        </NavLink>
-        <NavLink to="/stations" className="nav-link">
-          Stations
-        </NavLink>
-        <NavLink to="/mystations" className="nav-link">
+    <nav className="navbar">
+      <Link to="/" className="nav-brand">EV Charge Map</Link>
+      <div className="nav-menu">
+        <Link to="/" className={`nav-link ${location.pathname === "/" ? "active" : ""}`}>Home</Link>
+        <Link to="/stations" className={`nav-link ${location.pathname === "/stations" ? "active" : ""}`}>Stations</Link>
+        
+        {/* onClick 핸들러 추가 */}
+        <Link 
+          to="/mystations" 
+          onClick={handleMyStationsClick} 
+          className={`nav-link ${location.pathname === "/mystations" ? "active" : ""}`}
+        >
           My Stations
-        </NavLink>
-      </nav>
-
+        </Link>
+      </div>
       <div className="nav-right">
         {user ? (
           <>
-            <span className="nav-user">👤 {user.name}</span>
-            <button className="nav-button" onClick={logout}>
-              로그아웃
-            </button>
+            <span className="nav-user">{user.nickname}님</span>
+            <button className="nav-button" onClick={logout}>로그아웃</button>
           </>
         ) : (
-          <NavLink to="/login" className="nav-link">
-            로그인
-          </NavLink>
-        )}
+          <Link to="/login" className="nav-button">로그인</Link>
+        )}  
       </div>
-    </header>
+    </nav>
   );
 }
 

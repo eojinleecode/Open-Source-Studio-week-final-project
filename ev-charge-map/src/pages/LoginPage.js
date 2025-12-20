@@ -1,41 +1,37 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function LoginPage() {
-  const [nickname, setNickname] = useState("");
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!nickname.trim()) return;
-    login(nickname);
-    navigate("/");
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const foundUser = users.find(u => u.userId === userId && u.password === password);
+
+    if (foundUser) {
+      login(foundUser); // 닉네임으로 로그인 세션 유지
+      navigate("/");
+    } else {
+      alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+    }
   };
 
   return (
     <section className="login-page">
       <div className="login-card">
         <h2>로그인</h2>
-        <p className="login-subtitle">
-          회원가입 없이 닉네임만 입력하고 로그인할 수 있습니다.
-        </p>
-
         <form onSubmit={handleSubmit} className="login-form">
-          <label className="login-label">
-            닉네임
-            <input
-              type="text"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              placeholder="예) Hong GilDong"
-            />
-          </label>
-
-          <button type="submit" className="primary-button" style={{ width: "100%" }}>
-            로그인
-          </button>
+          <input type="text" placeholder="아이디" value={userId} onChange={e => setUserId(e.target.value)} />
+          <input type="password" placeholder="비밀번호" value={password} onChange={e => setPassword(e.target.value)} />
+          <button type="submit" className="primary-button" style={{width: '100%'}}>로그인</button>
+          <p style={{textAlign:'center', marginTop: '16px', fontSize: '14px'}}>
+            계정이 없으신가요? <Link to="/signup">회원가입</Link>
+          </p>
         </form>
       </div>
     </section>

@@ -12,12 +12,13 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = (nickname) => {
-    const trimmed = nickname.trim();
-    if (!trimmed) return;
-    const newUser = { id: trimmed, name: trimmed };
-    setUser(newUser);
-    localStorage.setItem("evcharge_user", JSON.stringify(newUser));
+  // nickname 대신 userData(객체)를 받도록 수정
+  const login = (userData) => {
+    if (!userData) return;
+    
+    // userData는 { userId, password, nickname } 전체가 들어옵니다.
+    setUser(userData); 
+    localStorage.setItem("evcharge_user", JSON.stringify(userData));
   };
 
   const logout = () => {
